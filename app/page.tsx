@@ -1,6 +1,5 @@
 import ConstructionAnimation from "./construction-animation";
 import ProfileMenu from "./profile-menu";
-import ThemeToggle from "./theme-toggle";
 import PasskeyButton from "./passkey-button";
 import { signInWithGoogle } from "./auth/actions";
 import { createClient } from "@/utils/supabase/server";
@@ -54,8 +53,6 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   return (
     <main className="flex min-h-dvh items-center justify-center bg-[var(--page-background)] px-6 py-12 text-[var(--page-foreground)] transition-colors duration-300 [@media(max-height:600px)]:py-4">
-      <ThemeToggle />
-
       <section className="flex w-full max-w-3xl flex-col items-center text-center">
         <ConstructionAnimation />
 

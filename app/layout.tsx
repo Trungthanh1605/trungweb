@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import { createClient } from "@/utils/supabase/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,22 +19,29 @@ export const metadata: Metadata = {
   description: "Personal Website",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getClaims();
+  const userId = authData?.claims?.sub;
+  let theme: "light" | "dark" | undefined;
+
+  if (userId) {
+    const { data } = await supabase
+      .from("user_preferences")
+      .select("theme")
+      .eq("user_id", userId)
+      .maybeSingle();
+    theme = data?.theme === "dark" ? "dark" : "light";
+  }
+
   return (
     <html
       lang="vi"
-      data-theme="light"
+      data-theme={theme}
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              '(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()',
-          }}
-        />
-      </head>
+      <head />
       <body className="min-h-full flex flex-col">
         <noscript>
           <iframe

@@ -1,7 +1,8 @@
 "use client";
 
 import { DotLottie } from "@lottiefiles/dotlottie-web";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { saveTheme } from "./auth/actions";
 
 type Theme = "light" | "dark";
 
@@ -16,6 +17,8 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
   const canvas = useRef<HTMLCanvasElement>(null);
   const animation = useRef<DotLottie>(null);
   const theme = useRef<Theme>("light");
+  const [error, setError] = useState<string>();
+  const [pending, startTransition] = useTransition();
 
   useEffect(() => {
     let dotLottie: DotLottie | undefined;
@@ -67,37 +70,61 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
   }, []);
 
   const toggleTheme = () => {
+    const previous = theme.current;
     const next: Theme = theme.current === "dark" ? "light" : "dark";
     theme.current = next;
     document.documentElement.dataset.theme = next;
     button.current?.setAttribute("aria-pressed", String(next === "dark"));
-
-    try {
-      localStorage.setItem("theme", next);
-    } catch {}
+    setError(undefined);
 
     animation.current?.setMarker(
       next === "dark" ? "Day to Night" : "Night to Day",
     );
     animation.current?.setLoop(false);
     animation.current?.play();
+
+    startTransition(async () => {
+      try {
+        await saveTheme(next);
+      } catch {
+        theme.current = previous;
+        document.documentElement.dataset.theme = previous;
+        button.current?.setAttribute(
+          "aria-pressed",
+          String(previous === "dark"),
+        );
+        animation.current?.setMarker(idleMarker(previous));
+        animation.current?.setLoop(true);
+        animation.current?.play();
+        setError("Không thể lưu giao diện. Vui lòng thử lại.");
+      }
+    });
   };
 
   return (
-    <button
-      ref={button}
-      type="button"
-      aria-label="Chế độ tối"
-      aria-pressed="false"
-      title="Chuyển chế độ sáng/tối"
-      onClick={toggleTheme}
-      className={`${compact ? "relative h-11 w-[4.25rem]" : "fixed right-4 top-4 z-10 h-12 w-[5.5rem] sm:right-6 sm:top-6"} touch-manipulation overflow-hidden rounded-full transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)]`}
-    >
-      <canvas
-        ref={canvas}
-        aria-hidden="true"
-        className="pointer-events-none h-full w-full opacity-0 transition-opacity duration-200"
-      />
-    </button>
+    <>
+      <button
+        ref={button}
+        type="button"
+        aria-label="Chế độ tối"
+        aria-pressed="false"
+        aria-describedby={error ? "theme-error" : undefined}
+        title="Chuyển chế độ sáng/tối"
+        onClick={toggleTheme}
+        disabled={pending}
+        className={`${compact ? "relative h-11 w-[4.25rem]" : "fixed right-4 top-4 z-10 h-12 w-[5.5rem] sm:right-6 sm:top-6"} touch-manipulation overflow-hidden rounded-full transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60`}
+      >
+        <canvas
+          ref={canvas}
+          aria-hidden="true"
+          className="pointer-events-none h-full w-full opacity-0 transition-opacity duration-200"
+        />
+      </button>
+      {error && (
+        <span id="theme-error" role="alert" className="sr-only">
+          {error}
+        </span>
+      )}
+    </>
   );
 }
