@@ -10,13 +10,26 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
   const email = typeof claims?.email === "string" ? claims.email : null;
+  const metadata = claims?.user_metadata;
+  const name =
+    typeof metadata?.full_name === "string"
+      ? metadata.full_name
+      : typeof metadata?.name === "string"
+        ? metadata.name
+        : email;
+  const avatarUrl =
+    typeof metadata?.avatar_url === "string"
+      ? metadata.avatar_url
+      : typeof metadata?.picture === "string"
+        ? metadata.picture
+        : null;
   const query = await searchParams;
   const authError = query.authError === "google";
 
   if (email) {
     return (
       <main className="relative min-h-dvh overflow-hidden bg-[var(--page-background)] text-[var(--page-foreground)] transition-colors duration-300">
-        <ProfileMenu email={email} />
+        <ProfileMenu email={email} name={name ?? email} avatarUrl={avatarUrl} />
         <section aria-label="Nội dung chính" className="min-h-dvh" />
 
         {query.welcome === "1" && (
