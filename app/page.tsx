@@ -1,57 +1,60 @@
-import Image from "next/image";
+import ConstructionAnimation from "./construction-animation";
+import ThemeToggle from "./theme-toggle";
+import { signInWithGoogle, signOut } from "./auth/actions";
+import { createClient } from "@/utils/supabase/server";
 
-const services = ["Next.js", "Supabase", "Cloudflare Workers"];
+export default async function Home({ searchParams }: PageProps<"/">) {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  const email = typeof claims?.email === "string" ? claims.email : null;
+  const authError = (await searchParams).authError === "google";
 
-export default function Home() {
   return (
-    <main className="min-h-dvh bg-[#f3f4ef] px-6 py-8 text-[#17231c] sm:px-10 sm:py-12">
-      <section className="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-6xl flex-col justify-between rounded-3xl border border-[#17231c]/15 bg-white p-7 shadow-[0_24px_80px_rgba(23,35,28,0.08)] sm:min-h-[calc(100dvh-6rem)] sm:p-12">
-        <header className="flex items-center justify-between gap-4 border-b border-[#17231c]/10 pb-5">
-          <p className="text-sm font-bold uppercase tracking-[0.2em]">Trungweb</p>
-          <span className="rounded-full bg-[#dceadf] px-3 py-1 text-xs font-semibold text-[#265f39]">
-            Đang xây dựng
-          </span>
-        </header>
+    <main className="flex min-h-dvh items-center justify-center bg-[var(--page-background)] px-6 py-12 text-[var(--page-foreground)] transition-colors duration-300 [@media(max-height:600px)]:py-4">
+      <ThemeToggle />
 
-        <div className="grid items-center gap-12 py-16 md:grid-cols-[1.35fr_0.65fr]">
-          <div>
-            <p className="mb-5 text-sm font-semibold uppercase tracking-[0.18em] text-[#50705a]">
-              Nền tảng web mới
-            </p>
-            <h1 className="max-w-3xl text-5xl font-semibold leading-[0.98] tracking-[-0.055em] sm:text-7xl">
-              Chúng tôi đang chuẩn bị một trải nghiệm mới.
-            </h1>
-            <p className="mt-7 max-w-xl text-lg leading-8 text-[#536158]">
-              Đây là trang tạm thời trong lúc nội dung, hình ảnh và nhận diện
-              chính thức được hoàn thiện.
-            </p>
+      <section className="flex w-full max-w-3xl flex-col items-center text-center">
+        <ConstructionAnimation />
+
+        <p className="mt-2 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--page-muted)] transition-colors duration-300 [@media(max-height:600px)]:mt-0">
+          Website đang được xây dựng
+        </p>
+        <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl [@media(max-height:600px)]:mt-2 [@media(max-height:600px)]:text-3xl">
+          WELCOME
+        </h1>
+        <p className="mt-5 max-w-md text-base leading-7 text-[var(--page-muted)] transition-colors duration-300 sm:text-lg [@media(max-height:600px)]:mt-2 [@media(max-height:600px)]:text-sm [@media(max-height:600px)]:leading-5">
+          PERSONAL WEBSITE.
+        </p>
+
+        {email ? (
+          <div className="mt-8 flex flex-col items-center gap-3 [@media(max-height:600px)]:mt-4">
+            <p className="text-sm text-[var(--page-muted)]">Đã đăng nhập: {email}</p>
+            <form action={signOut}>
+              <button className="cursor-pointer rounded-full border border-current px-5 py-2 text-sm font-semibold transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)]">
+                Đăng xuất
+              </button>
+            </form>
           </div>
+        ) : (
+          <form action={signInWithGoogle} className="mt-8 [@media(max-height:600px)]:mt-4">
+            <button className="inline-flex cursor-pointer items-center gap-3 rounded-full border border-black/15 bg-white px-5 py-3 text-sm font-semibold text-zinc-900 shadow-sm transition hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)]">
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5">
+                <path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.5-.2-2.2H12v4.3h5.4a4.6 4.6 0 0 1-2 3v2.8h3.5c2-1.9 3.2-4.6 3.2-7.9Z" />
+                <path fill="#34A853" d="M12 22c2.9 0 5.3-1 7-2.6l-3.5-2.8c-1 .7-2.2 1-3.5 1a6.1 6.1 0 0 1-5.7-4.2H2.7v2.9A10 10 0 0 0 12 22Z" />
+                <path fill="#FBBC05" d="M6.3 13.4A6 6 0 0 1 6 12c0-.5.1-1 .3-1.4v-3H2.7A10 10 0 0 0 2 12c0 1.6.4 3 1 4.3l3.3-2.9Z" />
+                <path fill="#EA4335" d="M12 6.4c1.6 0 3 .6 4.1 1.6l3.1-3A10 10 0 0 0 2.7 7.7l3.6 2.9A6.1 6.1 0 0 1 12 6.4Z" />
+              </svg>
+              Đăng nhập bằng Google
+            </button>
+          </form>
+        )}
 
-          <div className="flex aspect-square items-center justify-center rounded-[2rem] bg-[#e7eee8]">
-            <Image
-              src="/globe.svg"
-              alt="Hình ảnh minh họa tạm thời"
-              width={140}
-              height={140}
-              priority
-              className="h-28 w-28 opacity-55 sm:h-36 sm:w-36"
-            />
-          </div>
-        </div>
-
-        <footer className="flex flex-col gap-4 border-t border-[#17231c]/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-[#667169]">Hạ tầng ban đầu đã sẵn sàng.</p>
-          <ul className="flex flex-wrap gap-2" aria-label="Công nghệ sử dụng">
-            {services.map((service) => (
-              <li
-                key={service}
-                className="rounded-full border border-[#17231c]/15 px-3 py-1 text-xs font-medium"
-              >
-                {service}
-              </li>
-            ))}
-          </ul>
-        </footer>
+        {authError && (
+          <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
+            Đăng nhập Google không thành công. Vui lòng thử lại.
+          </p>
+        )}
       </section>
     </main>
   );

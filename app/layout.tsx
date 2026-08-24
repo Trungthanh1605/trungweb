@@ -14,16 +14,26 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Trungweb — Đang xây dựng",
-  description: "Website Trungweb đang được xây dựng.",
+  title: "Trung Nguyen's Website",
+  description: "Personal Website",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="vi"
+      data-theme="light"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()',
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <noscript>
           <iframe

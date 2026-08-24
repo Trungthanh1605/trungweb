@@ -5,6 +5,27 @@
   --font-mono: var(--font-geist-mono);
 }
 
+:root,
+[data-theme="light"] {
+  --page-background: #fafafa;
+  --page-foreground: #09090b;
+  --page-muted: #52525b;
+  --focus-color: #25324a;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --page-background: #111827;
+  --page-foreground: #f8fafc;
+  --page-muted: #cbd5e1;
+  --focus-color: #93c5fd;
+  color-scheme: dark;
+}
+
+html {
+  background: var(--page-background);
+}
+
 body {
   margin: 0;
 }
