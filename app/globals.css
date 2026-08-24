@@ -29,3 +29,15 @@ html {
 body {
   margin: 0;
 }
+
+@keyframes login-slide-out {
+  to {
+    transform: translateX(100%);
+    visibility: hidden;
+  }
+}
+
+.login-curtain {
+  animation: login-slide-out 560ms cubic-bezier(0.4, 0, 0.2, 1) 180ms forwards;
+  will-change: transform;
+}

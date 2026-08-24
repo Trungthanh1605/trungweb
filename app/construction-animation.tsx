@@ -3,7 +3,7 @@
 import { DotLottie } from "@lottiefiles/dotlottie-web";
 import { useEffect, useRef } from "react";
 
-export default function ConstructionAnimation() {
+export default function ConstructionAnimation({ decorative = false }: { decorative?: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const animation = useRef<DotLottie>(null);
 
@@ -44,16 +44,17 @@ export default function ConstructionAnimation() {
   return (
     <canvas
       ref={canvas}
-      role="button"
-      tabIndex={0}
-      aria-label="Nhấn để lật hoạt ảnh"
+      role={decorative ? undefined : "button"}
+      tabIndex={decorative ? -1 : 0}
+      aria-hidden={decorative || undefined}
+      aria-label={decorative ? undefined : "Nhấn để lật hoạt ảnh"}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           animation.current?.stateMachineFireEvent("clickEvent");
         }
       }}
-      className="aspect-square w-full max-w-md cursor-pointer rounded-[2rem] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-color)] [@media(max-height:600px)]:max-w-40"
+      className={`aspect-square w-full max-w-md rounded-[2rem] [@media(max-height:600px)]:max-w-40 ${decorative ? "" : "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-color)]"}`}
     />
   );
 }

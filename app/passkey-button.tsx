@@ -26,7 +26,7 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
     }
 
     if (register) setMessage("Đã tạo passkey thành công.");
-    else router.refresh();
+    else router.replace("/?welcome=1");
   }
 
   return (
