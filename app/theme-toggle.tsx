@@ -11,7 +11,7 @@ const currentTheme = (): Theme =>
 const idleMarker = (theme: Theme) =>
   theme === "dark" ? "Night Idle" : "Day Idle";
 
-export default function ThemeToggle({ side = "right" }: { side?: "left" | "right" }) {
+export default function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const button = useRef<HTMLButtonElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const animation = useRef<DotLottie>(null);
@@ -91,7 +91,7 @@ export default function ThemeToggle({ side = "right" }: { side?: "left" | "right
       aria-pressed="false"
       title="Chuyển chế độ sáng/tối"
       onClick={toggleTheme}
-      className={`fixed top-4 z-10 h-12 w-[5.5rem] touch-manipulation overflow-hidden rounded-full transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-color)] sm:top-6 ${side === "left" ? "left-4 sm:left-6" : "right-4 sm:right-6"}`}
+      className={`${compact ? "relative h-11 w-[4.25rem]" : "fixed right-4 top-4 z-10 h-12 w-[5.5rem] sm:right-6 sm:top-6"} touch-manipulation overflow-hidden rounded-full transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)]`}
     >
       <canvas
         ref={canvas}

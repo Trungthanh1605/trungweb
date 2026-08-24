@@ -41,3 +41,18 @@ body {
   animation: login-slide-out 560ms cubic-bezier(0.4, 0, 0.2, 1) 180ms forwards;
   will-change: transform;
 }
+
+@keyframes profile-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.15);
+  }
+}
+
+.profile-panel {
+  transform-origin: calc(100% - 1.5rem) -2.25rem;
+}
+
+.profile-menu[open] .profile-panel {
+  animation: profile-pop 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}

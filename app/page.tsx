@@ -16,7 +16,6 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   if (email) {
     return (
       <main className="relative min-h-dvh overflow-hidden bg-[var(--page-background)] text-[var(--page-foreground)] transition-colors duration-300">
-        <ThemeToggle side="left" />
         <ProfileMenu email={email} />
         <section aria-label="Nội dung chính" className="min-h-dvh" />
 
