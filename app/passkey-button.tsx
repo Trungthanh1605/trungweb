@@ -39,6 +39,7 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
 
     setPending(false);
     if (error) {
+      if (error.name === "NotAllowedError") return;
       setMessage(`Không thể tạo passkey: ${error.message}`);
       return;
     }
