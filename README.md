@@ -30,4 +30,5 @@ npm run build
 npm run preview
 ```
 
-Cloudflare Builds sử dụng `npm run deploy` để triển khai production.
+Cloudflare Builds chạy `npx opennextjs-cloudflare build`, sau đó dùng
+`npx wrangler deploy` để triển khai production.
