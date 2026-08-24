@@ -34,6 +34,18 @@ Không đưa secret key hoặc service-role key vào Git.
    `http://localhost:3000/auth/callback` và callback của website production vào
    **Redirect URLs**.
 
+## Passkey
+
+Trong Supabase Dashboard → Authentication → Passkeys, bật passkey và đặt:
+
+- Relying Party Display Name: `Trungweb`
+- Relying Party ID: `itstrung.dpdns.org`
+- Relying Party Origins: `https://itstrung.dpdns.org`
+
+Đăng nhập Google một lần, chọn **Tạo passkey**, rồi xác nhận bằng Windows Hello,
+vân tay hoặc khóa bảo mật. Passkey gắn với domain production; nếu cần thử trên
+`localhost`, dùng một Supabase project riêng với RP ID `localhost`.
+
 ## Kiểm tra Cloudflare
 
 ```powershell
