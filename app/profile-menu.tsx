@@ -1,8 +1,11 @@
+"use client";
+
 import LogoutButton from "./logout-button";
 import PasskeyButton from "./passkey-button";
 import ThemeToggle from "./theme-toggle";
 import { signOut } from "./auth/actions";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 
 export default function ProfileMenu({
   email,
@@ -13,10 +16,21 @@ export default function ProfileMenu({
   name: string;
   avatarUrl: string | null;
 }) {
+  const menu = useRef<HTMLDetailsElement>(null);
   const initial = name.charAt(0).toUpperCase();
 
+  useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      const current = menu.current;
+      if (current && !current.contains(event.target as Node)) current.open = false;
+    };
+
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, []);
+
   return (
-    <details className="profile-menu group fixed right-4 top-4 z-20 sm:right-6 sm:top-6">
+    <details ref={menu} className="profile-menu group fixed right-4 top-4 z-20 sm:right-6 sm:top-6">
       <summary
         aria-label="Mở hồ sơ người dùng"
         className="flex size-12 cursor-pointer list-none items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white shadow-sm ring-2 ring-white transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-color)] [&::-webkit-details-marker]:hidden"
