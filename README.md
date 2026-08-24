@@ -49,7 +49,7 @@ Cloudflare Builds chạy `npx opennextjs-cloudflare build`, sau đó dùng
 Chạy một lệnh trong PowerShell:
 
 ```powershell
-npm run deploy -- "Mô tả thay đổi"
+.\deploy.cmd "Mô tả thay đổi"
 ```
 
 Lệnh này kiểm tra build, commit toàn bộ thay đổi, push lên nhánh `main`, sau đó
