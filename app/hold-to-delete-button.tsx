@@ -103,7 +103,7 @@ export default function HoldToDeleteButton({
           ref={canvas}
           width={208}
           height={72}
-          className="pointer-events-none h-full w-full scale-x-[1.75] scale-y-[3.4]"
+          className="pointer-events-none h-full w-full scale-x-[3.3] scale-y-[3.3]"
         />
       </span>
     </button>
