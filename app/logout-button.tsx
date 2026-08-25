@@ -51,10 +51,10 @@ export default function LogoutButton() {
       className="flex h-11 w-full cursor-pointer items-center justify-between overflow-hidden rounded-2xl bg-black/[0.04] pl-3 text-left transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60 dark:bg-white/[0.06]"
     >
       <span className="text-sm font-medium">Đăng xuất</span>
-      <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden" aria-hidden="true">
+      <span className="profile-action-visual mr-1" aria-hidden="true">
         <canvas
           ref={canvas}
-          className="pointer-events-none size-11 scale-[2] opacity-0 transition-opacity duration-200"
+          className="pointer-events-none h-full w-full scale-[2.4] opacity-0 transition-opacity duration-200"
         />
       </span>
     </button>

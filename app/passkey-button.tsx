@@ -14,7 +14,7 @@ function PasskeyIcon({ busy }: { busy: boolean }) {
       fill="none"
       stroke="currentColor"
       strokeWidth="1.8"
-      className={`size-5 ${busy ? "animate-pulse" : ""}`}
+      className={`profile-action-icon ${busy ? "animate-pulse" : ""}`}
     >
       <circle cx="8" cy="15" r="4" />
       <path strokeLinecap="round" strokeLinejoin="round" d="m11 12 8-8m-2 2 2 2m-5 1 2 2" />
@@ -145,7 +145,9 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
             "Tạo Passkey"
           )
         ) : (
-          <PasskeyIcon busy={pending || loading} />
+          <span className="profile-action-visual" aria-hidden="true">
+            <PasskeyIcon busy={pending || loading} />
+          </span>
         )}
       </button>
       {message && (

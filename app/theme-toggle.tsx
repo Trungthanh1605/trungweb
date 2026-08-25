@@ -112,13 +112,17 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
         title="Chuyển chế độ sáng/tối"
         onClick={toggleTheme}
         disabled={pending}
-        className={`${compact ? "relative h-11 w-[4.25rem]" : "fixed right-4 top-4 z-10 h-12 w-[5.5rem] sm:right-6 sm:top-6"} touch-manipulation overflow-hidden rounded-full transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60`}
+        className={`${compact ? "relative h-11 w-[4.25rem] p-1" : "fixed right-4 top-4 z-10 h-12 w-[5.5rem] sm:right-6 sm:top-6"} flex touch-manipulation items-center justify-center overflow-hidden rounded-full transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60`}
       >
-        <canvas
-          ref={canvas}
+        <span
+          className={compact ? "profile-action-visual profile-action-visual-wide" : "h-full w-full"}
           aria-hidden="true"
-          className="pointer-events-none h-full w-full opacity-0 transition-opacity duration-200"
-        />
+        >
+          <canvas
+            ref={canvas}
+            className="pointer-events-none h-full w-full opacity-0 transition-opacity duration-200"
+          />
+        </span>
       </button>
       {error && (
         <span id="theme-error" role="alert" className="sr-only">

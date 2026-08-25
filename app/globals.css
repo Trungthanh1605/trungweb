@@ -93,3 +93,22 @@ body {
   min-width: max-content;
   animation: overflow-marquee 6s ease-in-out 1s infinite alternate;
 }
+
+.profile-action-visual {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  place-items: center;
+  overflow: hidden;
+}
+
+.profile-action-visual-wide {
+  width: 100%;
+}
+
+.profile-action-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}

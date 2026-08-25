@@ -78,13 +78,13 @@ export default function ProfileMenu({
                 <span>{email}</span>
               </p>
             </div>
-            <span className="flex size-11 items-center justify-center" aria-hidden="true">
+            <span className="profile-action-visual justify-self-center" aria-hidden="true">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
-                className="account-chevron size-4 transition-transform duration-200"
+                className="account-chevron profile-action-icon transition-transform duration-200"
               >
                 <path
                   strokeLinecap="round"

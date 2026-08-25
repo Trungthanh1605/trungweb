@@ -93,8 +93,11 @@ export default function HoldToDeleteButton({
       onBlur={() => setHold("release")}
       className="h-11 w-20 shrink-0 touch-manipulation cursor-pointer overflow-hidden rounded-l-xl rounded-r-2xl p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:pointer-events-none disabled:cursor-wait disabled:opacity-50"
     >
-      <span className="block h-full w-full overflow-hidden rounded-lg" aria-hidden="true">
-        <canvas ref={canvas} className="pointer-events-none h-full w-full scale-[2]" />
+      <span
+        className="profile-action-visual profile-action-visual-wide rounded-lg"
+        aria-hidden="true"
+      >
+        <canvas ref={canvas} className="pointer-events-none h-full w-full scale-[3]" />
       </span>
     </button>
   );
