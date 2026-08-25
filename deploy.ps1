@@ -9,7 +9,10 @@ if ((git branch --show-current) -ne "main") {
   throw "Chỉ deploy từ nhánh main."
 }
 
-npm run build
+npm run lint
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+npx tsc --noEmit --incremental false
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 git add --all
