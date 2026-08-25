@@ -37,7 +37,7 @@ export default function HoldToDeleteButton({
         autoplay: false,
         loop: false,
         stateMachineId: "StateMachine1",
-        renderConfig: { autoResize: true },
+        renderConfig: { autoResize: false, devicePixelRatio: 2 },
       });
       handleDeleted = ({ state }) => {
         if (state !== "Deleted" || deleting.current || disabledRef.current) return;
@@ -93,7 +93,7 @@ export default function HoldToDeleteButton({
         if (event.key === "Enter" || event.key === " ") setHold("release");
       }}
       onBlur={() => setHold("release")}
-      className="h-11 w-28 shrink-0 touch-manipulation cursor-pointer overflow-hidden rounded-2xl p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:pointer-events-none disabled:cursor-wait disabled:opacity-50"
+      className="h-11 w-28 shrink-0 touch-manipulation cursor-pointer overflow-hidden rounded-2xl bg-transparent p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:pointer-events-none disabled:cursor-wait disabled:opacity-50"
     >
       <span
         className="profile-action-visual profile-action-visual-wide rounded-lg"
@@ -101,6 +101,8 @@ export default function HoldToDeleteButton({
       >
         <canvas
           ref={canvas}
+          width={208}
+          height={72}
           className="pointer-events-none h-full w-full scale-x-[1.75] scale-y-[3.4]"
         />
       </span>
