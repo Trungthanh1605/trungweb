@@ -48,12 +48,12 @@ export default function LogoutButton() {
       onClick={play}
       onMouseEnter={play}
       onFocus={play}
-      className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60"
+      className="flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60"
     >
       <canvas
         ref={canvas}
         aria-hidden="true"
-        className="pointer-events-none h-14 w-[4.5rem] opacity-0 transition-opacity duration-200"
+        className="pointer-events-none size-11 scale-[2] opacity-0 transition-opacity duration-200"
       />
     </button>
   );

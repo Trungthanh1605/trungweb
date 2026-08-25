@@ -66,3 +66,30 @@ body {
 .profile-menu[open] .profile-panel {
   animation: profile-pop 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+
+.account-details[open] .account-chevron {
+  transform: rotate(180deg);
+}
+
+.account-details:not([open]) > :not(summary) {
+  display: none;
+}
+
+@keyframes overflow-marquee {
+  to {
+    transform: translateX(min(0px, calc(100cqw - 100%)));
+  }
+}
+
+.overflow-marquee {
+  container-type: inline-size;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.overflow-marquee > span {
+  display: inline-block;
+  min-width: max-content;
+  animation: overflow-marquee 6s ease-in-out 1s infinite alternate;
+}

@@ -48,32 +48,68 @@ export default function ProfileMenu({
         )}
       </summary>
 
-      <div className="profile-panel absolute right-0 mt-3 max-h-[calc(100dvh-6.25rem)] w-72 overflow-y-auto rounded-3xl border border-black/10 bg-[var(--page-background)] p-4 text-center shadow-xl dark:border-white/10">
-        <div className="mx-auto flex size-16 items-center justify-center overflow-hidden rounded-full bg-blue-600 text-2xl font-semibold text-white">
-          {avatarUrl ? (
-            <Image
-              src={avatarUrl}
-              alt=""
-              width={64}
-              height={64}
-              className="size-16 object-cover"
-            />
-          ) : (
-            initial
-          )}
-        </div>
-        <p className="mt-3 truncate font-semibold">{name}</p>
-        <p className="mt-1 truncate text-sm text-[var(--page-muted)]">{email}</p>
+      <div className="profile-panel absolute right-0 mt-3 max-h-[calc(100dvh-6.25rem)] w-72 overflow-y-auto rounded-3xl border border-black/10 bg-[var(--page-background)] p-4 shadow-xl dark:border-white/10">
+        <details open className="account-details w-full">
+          <summary className="grid h-11 cursor-pointer list-none grid-cols-[2.25rem_minmax(0,1fr)_2.75rem] items-center gap-2 rounded-2xl bg-black/[0.04] px-2 text-left dark:bg-white/[0.06] [&::-webkit-details-marker]:hidden">
+            <div className="flex size-9 items-center justify-center overflow-hidden rounded-full bg-blue-600 font-semibold text-white">
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt={`Ảnh đại diện của ${name}`}
+                  width={36}
+                  height={36}
+                  className="size-9 object-cover"
+                />
+              ) : (
+                initial
+              )}
+            </div>
+            <div className="min-w-0">
+              <p
+                className="overflow-marquee text-sm font-semibold leading-4"
+                title={name}
+              >
+                <span>{name}</span>
+              </p>
+              <p
+                className="overflow-marquee text-xs leading-4 text-[var(--page-muted)]"
+                title={email}
+              >
+                <span>{email}</span>
+              </p>
+            </div>
+            <span className="flex size-11 items-center justify-center" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="account-chevron size-4 transition-transform duration-200"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m6 9 6 6 6-6"
+                />
+              </svg>
+            </span>
+          </summary>
 
-        <div className="mt-5 flex flex-col items-center gap-3 border-t border-black/10 pt-4 dark:border-white/10">
-          <div className="flex min-h-11 w-full items-center justify-between rounded-2xl bg-black/[0.04] px-3 dark:bg-white/[0.06]">
-            <span className="text-sm font-medium">Giao diện</span>
-            <ThemeToggle compact />
+          <div className="mt-2 flex flex-col items-center gap-2">
+            <PasskeyButton mode="register" />
+            <form
+              action={signOut}
+              className="flex h-11 w-full items-center justify-between rounded-2xl bg-black/[0.04] pl-3 dark:bg-white/[0.06]"
+            >
+              <span className="text-sm font-medium">Đăng xuất</span>
+              <LogoutButton />
+            </form>
           </div>
-          <PasskeyButton mode="register" />
-          <form action={signOut}>
-            <LogoutButton />
-          </form>
+        </details>
+
+        <div className="mt-3 flex h-11 w-full items-center justify-between rounded-2xl bg-black/[0.04] px-3 dark:bg-white/[0.06]">
+          <span className="text-sm font-medium">Giao diện</span>
+          <ThemeToggle compact />
         </div>
       </div>
     </details>

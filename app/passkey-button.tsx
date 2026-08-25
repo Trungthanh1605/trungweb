@@ -102,10 +102,13 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
           {passkeys.map((passkey) => (
             <li
               key={passkey.id}
-              className="flex items-center justify-between gap-3 rounded-2xl bg-black/[0.04] px-3 py-2 dark:bg-white/[0.06]"
+              className="flex h-11 items-center justify-between gap-3 rounded-2xl bg-black/[0.04] px-3 dark:bg-white/[0.06]"
             >
-              <span className="min-w-0 truncate text-sm">
-                {passkey.friendly_name || "Passkey"}
+              <span
+                className="overflow-marquee min-w-0 flex-1 text-sm"
+                title={passkey.friendly_name || "Passkey"}
+              >
+                <span>{passkey.friendly_name || "Passkey"}</span>
               </span>
               <HoldToDeleteButton
                 label={passkey.friendly_name || "Passkey"}
@@ -125,17 +128,25 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
             : pending
               ? "Đang xử lý passkey"
               : register
-                ? passkeys.length > 0
-                  ? "Thêm passkey"
-                  : "Tạo passkey"
+                ? "Tạo passkey"
                 : "Đăng nhập bằng passkey"
         }
-        title={register ? (passkeys.length > 0 ? "Thêm passkey" : "Tạo passkey") : "Đăng nhập bằng passkey"}
+        title={register ? "Tạo passkey" : "Đăng nhập bằng passkey"}
         onClick={register ? handleRegister : handleSignIn}
         disabled={pending || loading}
-        className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-current transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50"
+        className={`${register ? "h-11 w-full rounded-2xl bg-black/[0.04] px-3 text-sm font-medium dark:bg-white/[0.06]" : "size-11 rounded-full border border-current"} flex cursor-pointer items-center justify-center transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50`}
       >
-        <PasskeyIcon busy={pending || loading} />
+        {register ? (
+          loading ? (
+            "Đang tải Passkey"
+          ) : pending ? (
+            "Đang xử lý Passkey"
+          ) : (
+            "Tạo Passkey"
+          )
+        ) : (
+          <PasskeyIcon busy={pending || loading} />
+        )}
       </button>
       {message && (
         <p role="status" className="max-w-md text-sm text-[var(--page-muted)]">
