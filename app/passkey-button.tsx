@@ -102,7 +102,7 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
           {passkeys.map((passkey) => (
             <li
               key={passkey.id}
-              className="flex h-11 items-center justify-between gap-3 rounded-2xl bg-black/[0.04] px-3 dark:bg-white/[0.06]"
+              className="flex h-11 items-center justify-between gap-2 rounded-2xl bg-black/[0.04] pl-3 dark:bg-white/[0.06]"
             >
               <span
                 className="overflow-marquee min-w-0 flex-1 text-sm"
@@ -134,7 +134,7 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
         title={register ? "Tạo passkey" : "Đăng nhập bằng passkey"}
         onClick={register ? handleRegister : handleSignIn}
         disabled={pending || loading}
-        className={`${register ? "h-11 w-full rounded-2xl bg-black/[0.04] px-3 text-sm font-medium dark:bg-white/[0.06]" : "size-11 rounded-full border border-current"} flex cursor-pointer items-center justify-center transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50`}
+        className={`${register ? "h-11 w-full justify-start rounded-2xl bg-black/[0.04] px-3 text-left text-sm font-medium dark:bg-white/[0.06]" : "size-11 justify-center rounded-full border border-current"} flex cursor-pointer items-center transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50`}
       >
         {register ? (
           loading ? (

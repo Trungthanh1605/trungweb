@@ -97,20 +97,16 @@ export default function ProfileMenu({
 
           <div className="mt-2 flex flex-col items-center gap-2">
             <PasskeyButton mode="register" />
-            <form
-              action={signOut}
-              className="flex h-11 w-full items-center justify-between rounded-2xl bg-black/[0.04] pl-3 dark:bg-white/[0.06]"
-            >
-              <span className="text-sm font-medium">Đăng xuất</span>
-              <LogoutButton />
-            </form>
           </div>
         </details>
 
-        <div className="mt-3 flex h-11 w-full items-center justify-between rounded-2xl bg-black/[0.04] px-3 dark:bg-white/[0.06]">
+        <div className="mt-2 flex h-11 w-full items-center justify-between rounded-2xl bg-black/[0.04] px-3 dark:bg-white/[0.06]">
           <span className="text-sm font-medium">Giao diện</span>
           <ThemeToggle compact />
         </div>
+        <form action={signOut} className="mt-2 w-full">
+          <LogoutButton />
+        </form>
       </div>
     </details>
   );

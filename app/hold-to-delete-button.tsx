@@ -91,9 +91,13 @@ export default function HoldToDeleteButton({
         if (event.key === "Enter" || event.key === " ") setHold("release");
       }}
       onBlur={() => setHold("release")}
-      className="h-11 w-28 shrink-0 touch-manipulation cursor-pointer overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:pointer-events-none disabled:cursor-wait disabled:opacity-50"
+      className="h-11 w-20 shrink-0 touch-manipulation cursor-pointer overflow-hidden rounded-l-xl rounded-r-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:pointer-events-none disabled:cursor-wait disabled:opacity-50"
     >
-      <canvas ref={canvas} aria-hidden="true" className="pointer-events-none h-full w-full scale-[1.7]" />
+      <canvas
+        ref={canvas}
+        aria-hidden="true"
+        className="pointer-events-none h-full w-full translate-x-2 scale-[2.4]"
+      />
     </button>
   );
 }
