@@ -9,6 +9,7 @@ import {
 } from "./auth/actions";
 import HoldToDeleteButton from "./hold-to-delete-button";
 import ProfileSettings from "./profile-settings";
+import SettingsIcon from "./settings-icon";
 
 export type Workspace = {
   id: number;
@@ -298,6 +299,11 @@ export default function WorkspaceShell({
     });
   }
 
+  function selectSection(section: Section) {
+    setActive(section);
+    if (!expanded) setExpanded(true);
+  }
+
   return (
     <main className="min-h-dvh overflow-x-hidden bg-[var(--page-background)] text-[var(--page-foreground)] transition-colors duration-300">
       <aside
@@ -455,10 +461,10 @@ export default function WorkspaceShell({
               type="button"
               title={expanded ? undefined : text.search}
               aria-pressed={active === "search"}
-              onClick={() => setActive("search")}
-              className={`mb-3 grid h-11 w-full cursor-pointer grid-cols-[2.5rem_1fr_3rem] items-center gap-2 rounded-xl text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] ${active === "search" ? "bg-[var(--ui-active)] font-semibold" : "bg-[var(--ui-subtle)] hover:bg-[var(--ui-hover)]"}`}
+              onClick={() => selectSection("search")}
+              className={`group/sidebar-item mb-3 grid h-11 w-full cursor-pointer grid-cols-[2.5rem_1fr_3rem] items-center gap-2 rounded-xl text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] ${active === "search" ? "bg-[var(--ui-active)] font-semibold" : "bg-[var(--ui-subtle)] hover:bg-[var(--ui-hover)]"}`}
             >
-              <span className="grid size-10 place-items-center"><SidebarIcon><circle cx="11" cy="11" r="6" /><path strokeLinecap="round" d="m16 16 4 4" /></SidebarIcon></span>
+              <span className={`grid size-10 place-items-center transition-transform duration-200 group-hover/sidebar-item:scale-110 ${active === "search" ? "scale-110" : ""}`}><SidebarIcon><circle cx="11" cy="11" r="6" /><path strokeLinecap="round" d="m16 16 4 4" /></SidebarIcon></span>
               <span className={`whitespace-nowrap text-sm text-[var(--page-muted)] transition-[opacity,transform] duration-200 ${expanded ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`}>{text.searchPlaceholder}</span>
               <kbd className={`whitespace-nowrap rounded-md border border-[var(--ui-border)] px-1.5 py-1 text-[10px] font-medium text-[var(--page-muted)] transition-[opacity,transform] duration-200 ${expanded ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`}>Ctrl K</kbd>
             </button>
@@ -472,10 +478,10 @@ export default function WorkspaceShell({
                     type="button"
                     title={expanded ? undefined : text[item.id]}
                     aria-pressed={selected}
-                    onClick={() => setActive(item.id)}
-                    className={`grid h-11 w-full cursor-pointer grid-cols-[2.5rem_1fr] items-center gap-2 rounded-xl text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] ${selected ? "bg-[var(--ui-active)] font-semibold" : "hover:bg-[var(--ui-hover)]"}`}
+                    onClick={() => selectSection(item.id)}
+                    className={`group/sidebar-item grid h-11 w-full cursor-pointer grid-cols-[2.5rem_1fr] items-center gap-2 rounded-xl text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] ${selected ? "bg-[var(--ui-active)] font-semibold" : "hover:bg-[var(--ui-hover)]"}`}
                   >
-                    <span className="grid size-10 place-items-center"><SidebarIcon>{item.path}</SidebarIcon></span>
+                    <span className={`grid size-10 place-items-center transition-transform duration-200 group-hover/sidebar-item:scale-110 ${selected ? "scale-110" : ""}`}><SidebarIcon>{item.path}</SidebarIcon></span>
                     <span className={`whitespace-nowrap text-sm transition-[opacity,transform] duration-200 ${expanded ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`}>{text[item.id]}</span>
                   </button>
                 );
@@ -488,10 +494,10 @@ export default function WorkspaceShell({
               type="button"
               title={expanded ? undefined : text.settings}
               aria-pressed={active === "settings"}
-              onClick={() => setActive("settings")}
-              className={`grid h-11 w-full cursor-pointer grid-cols-[2.5rem_1fr] items-center gap-2 rounded-xl text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] ${active === "settings" ? "bg-[var(--ui-active)] font-semibold" : "hover:bg-[var(--ui-hover)]"}`}
+              onClick={() => selectSection("settings")}
+              className={`group/sidebar-item grid h-11 w-full cursor-pointer grid-cols-[2.5rem_1fr] items-center gap-2 rounded-xl text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] ${active === "settings" ? "bg-[var(--ui-active)] font-semibold" : "hover:bg-[var(--ui-hover)]"}`}
             >
-              <span className="grid size-10 place-items-center"><SidebarIcon><path strokeLinecap="round" strokeLinejoin="round" d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm8 3-1.7-1 .1-2-2-1.2-1.7 1-1.8-.9-1.8.9-1.7-1-2 1.2.1 2-1.7 1v2l1.7 1-.1 2 2 1.2 1.7-1 1.8.9 1.8-.9 1.7 1 2-1.2-.1-2 1.7-1v-2Z" /></SidebarIcon></span>
+              <span className={`grid size-10 place-items-center transition-transform duration-200 group-hover/sidebar-item:scale-110 ${active === "settings" ? "scale-110" : ""}`}><SettingsIcon selected={active === "settings"} /></span>
               <span className={`whitespace-nowrap text-sm transition-[opacity,transform] duration-200 ${expanded ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`}>{text.settings}</span>
             </button>
           </div>
