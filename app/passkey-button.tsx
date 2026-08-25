@@ -4,6 +4,23 @@ import type { PasskeyListItem } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import HoldToDeleteButton from "./hold-to-delete-button";
+
+function PasskeyIcon({ busy }: { busy: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className={`size-5 ${busy ? "animate-pulse" : ""}`}
+    >
+      <circle cx="8" cy="15" r="4" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="m11 12 8-8m-2 2 2 2m-5 1 2 2" />
+    </svg>
+  );
+}
 
 export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }) {
   const router = useRouter();
@@ -49,9 +66,6 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
   }
 
   async function handleDelete(passkey: PasskeyListItem) {
-    const name = passkey.friendly_name || "Passkey";
-    if (!window.confirm(`Xóa ${name}? Bạn sẽ không thể dùng passkey này để đăng nhập.`)) return;
-
     setPending(true);
     setMessage(undefined);
     const { error } = await createClient().auth.passkey.delete({ passkeyId: passkey.id });
@@ -59,11 +73,12 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
 
     if (error) {
       setMessage(`Không thể xóa passkey: ${error.message}`);
-      return;
+      return false;
     }
 
     setPasskeys((current) => current.filter(({ id }) => id !== passkey.id));
     setMessage("Đã xóa passkey.");
+    return true;
   }
 
   async function handleSignIn() {
@@ -92,14 +107,11 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
               <span className="min-w-0 truncate text-sm">
                 {passkey.friendly_name || "Passkey"}
               </span>
-              <button
-                type="button"
-                onClick={() => handleDelete(passkey)}
+              <HoldToDeleteButton
+                label={passkey.friendly_name || "Passkey"}
                 disabled={pending}
-                className="cursor-pointer text-sm font-semibold text-red-600 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50 dark:text-red-400"
-              >
-                Xóa
-              </button>
+                onDelete={() => handleDelete(passkey)}
+              />
             </li>
           ))}
         </ul>
@@ -107,19 +119,23 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
 
       <button
         type="button"
+        aria-label={
+          loading
+            ? "Đang tải passkey"
+            : pending
+              ? "Đang xử lý passkey"
+              : register
+                ? passkeys.length > 0
+                  ? "Thêm passkey"
+                  : "Tạo passkey"
+                : "Đăng nhập bằng passkey"
+        }
+        title={register ? (passkeys.length > 0 ? "Thêm passkey" : "Tạo passkey") : "Đăng nhập bằng passkey"}
         onClick={register ? handleRegister : handleSignIn}
         disabled={pending || loading}
-        className="cursor-pointer rounded-full border border-current px-5 py-2 text-sm font-semibold transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50"
+        className="flex size-11 cursor-pointer items-center justify-center rounded-full border border-current transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50"
       >
-        {loading
-          ? "Đang tải…"
-          : pending
-            ? "Đang xử lý…"
-            : register
-              ? passkeys.length > 0
-                ? "Thêm passkey"
-                : "Tạo passkey"
-              : "Đăng nhập bằng passkey"}
+        <PasskeyIcon busy={pending || loading} />
       </button>
       {message && (
         <p role="status" className="max-w-md text-sm text-[var(--page-muted)]">
