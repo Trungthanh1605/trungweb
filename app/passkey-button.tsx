@@ -22,13 +22,20 @@ function PasskeyIcon({ busy }: { busy: boolean }) {
   );
 }
 
-export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }) {
+export default function PasskeyButton({
+  mode,
+  language = "vi",
+}: {
+  mode: "register" | "sign-in";
+  language?: "vi" | "en";
+}) {
   const router = useRouter();
   const [message, setMessage] = useState<string>();
   const [pending, setPending] = useState(false);
   const [passkeys, setPasskeys] = useState<PasskeyListItem[]>([]);
   const [loading, setLoading] = useState(mode === "register");
   const register = mode === "register";
+  const english = language === "en";
 
   useEffect(() => {
     if (!register) return;
@@ -37,7 +44,13 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
     const supabase = createClient();
     void supabase.auth.passkey.list().then(({ data, error }) => {
       if (!active) return;
-      if (error) setMessage(`Không thể tải danh sách passkey: ${error.message}`);
+      if (error) {
+        setMessage(
+          english
+            ? `Could not load passkeys: ${error.message}`
+            : `Không thể tải danh sách passkey: ${error.message}`,
+        );
+      }
       else setPasskeys(data ?? []);
       setLoading(false);
     });
@@ -45,7 +58,7 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
     return () => {
       active = false;
     };
-  }, [register]);
+  }, [english, register]);
 
   async function handleRegister() {
     setPending(true);
@@ -57,12 +70,16 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
     setPending(false);
     if (error) {
       if (error.name === "NotAllowedError") return;
-      setMessage(`Không thể tạo passkey: ${error.message}`);
+      setMessage(
+        english
+          ? `Could not create passkey: ${error.message}`
+          : `Không thể tạo passkey: ${error.message}`,
+      );
       return;
     }
 
     if (data) setPasskeys((current) => [...current, data]);
-    setMessage("Đã tạo passkey thành công.");
+    setMessage(english ? "Passkey created." : "Đã tạo passkey thành công.");
   }
 
   async function handleDelete(passkey: PasskeyListItem) {
@@ -72,12 +89,16 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
     setPending(false);
 
     if (error) {
-      setMessage(`Không thể xóa passkey: ${error.message}`);
+      setMessage(
+        english
+          ? `Could not delete passkey: ${error.message}`
+          : `Không thể xóa passkey: ${error.message}`,
+      );
       return false;
     }
 
     setPasskeys((current) => current.filter(({ id }) => id !== passkey.id));
-    setMessage("Đã xóa passkey.");
+    setMessage(english ? "Passkey deleted." : "Đã xóa passkey.");
     return true;
   }
 
@@ -88,7 +109,11 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
     setPending(false);
 
     if (error) {
-      setMessage(`Không thể đăng nhập bằng passkey: ${error.message}`);
+      setMessage(
+        english
+          ? `Could not sign in with a passkey: ${error.message}`
+          : `Không thể đăng nhập bằng passkey: ${error.message}`,
+      );
       return;
     }
 
@@ -112,6 +137,7 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
               </span>
               <HoldToDeleteButton
                 label={passkey.friendly_name || "Passkey"}
+                actionLabel={english ? "Hold to delete" : "Giữ để xóa"}
                 disabled={pending}
                 onDelete={() => handleDelete(passkey)}
               />
@@ -124,25 +150,41 @@ export default function PasskeyButton({ mode }: { mode: "register" | "sign-in" }
         type="button"
         aria-label={
           loading
-            ? "Đang tải passkey"
+            ? english
+              ? "Loading passkeys"
+              : "Đang tải passkey"
             : pending
-              ? "Đang xử lý passkey"
+              ? english
+                ? "Processing passkey"
+                : "Đang xử lý passkey"
               : register
-                ? "Tạo passkey"
-                : "Đăng nhập bằng passkey"
+                ? english
+                  ? "Create passkey"
+                  : "Tạo passkey"
+                : english
+                  ? "Sign in with a passkey"
+                  : "Đăng nhập bằng passkey"
         }
-        title={register ? "Tạo passkey" : "Đăng nhập bằng passkey"}
+        title={
+          register
+            ? english
+              ? "Create passkey"
+              : "Tạo passkey"
+            : english
+              ? "Sign in with a passkey"
+              : "Đăng nhập bằng passkey"
+        }
         onClick={register ? handleRegister : handleSignIn}
         disabled={pending || loading}
         className={`${register ? "h-11 w-full justify-start rounded-2xl bg-black/[0.04] px-3 text-left text-sm font-medium dark:bg-white/[0.06]" : "size-11 justify-center rounded-full border border-current"} flex cursor-pointer items-center transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50`}
       >
         {register ? (
           loading ? (
-            "Đang tải Passkey"
+            english ? "Loading passkeys" : "Đang tải Passkey"
           ) : pending ? (
-            "Đang xử lý Passkey"
+            english ? "Processing passkey" : "Đang xử lý Passkey"
           ) : (
-            "Tạo Passkey"
+            english ? "Create Passkey" : "Tạo Passkey"
           )
         ) : (
           <span className="profile-action-visual" aria-hidden="true">

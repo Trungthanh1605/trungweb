@@ -42,3 +42,45 @@ export async function saveTheme(theme: "light" | "dark") {
 
   if (error) throw new Error("Không thể lưu giao diện.");
 }
+
+export async function saveLanguage(language: "vi" | "en") {
+  if (language !== "vi" && language !== "en") {
+    throw new Error("Ngôn ngữ không hợp lệ.");
+  }
+
+  const supabase = await createClient();
+  const { data, error: authError } = await supabase.auth.getClaims();
+  const userId = data?.claims?.sub;
+
+  if (authError || !userId) throw new Error("Bạn cần đăng nhập để lưu ngôn ngữ.");
+
+  const { error } = await supabase
+    .from("user_preferences")
+    .upsert({ user_id: userId, language }, { onConflict: "user_id" });
+
+  if (error) throw new Error("Không thể lưu ngôn ngữ.");
+}
+
+export async function createWorkspace(name: string) {
+  const normalizedName = name.trim();
+  if (normalizedName.length < 1 || normalizedName.length > 48) {
+    throw new Error("Tên workspace phải có từ 1 đến 48 ký tự.");
+  }
+
+  const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  const userId = authData?.claims?.sub;
+
+  if (authError || !userId) throw new Error("Bạn cần đăng nhập để tạo workspace.");
+
+  const { data, error } = await supabase
+    .from("workspaces")
+    .insert({ owner_user_id: userId, name: normalizedName })
+    .select("id, name")
+    .single();
+
+  if (error?.code === "23505") throw new Error("Bạn đã có workspace với tên này.");
+  if (error || !data) throw new Error("Không thể tạo workspace.");
+
+  return { id: data.id as number, name: data.name as string };
+}

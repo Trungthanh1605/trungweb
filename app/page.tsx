@@ -1,7 +1,6 @@
 import ConstructionAnimation from "./construction-animation";
-import ProfileMenu from "./profile-menu";
 import PasskeyButton from "./passkey-button";
-import WorkspaceShell from "./workspace-shell";
+import WorkspaceShell, { type Workspace } from "./workspace-shell";
 import { signInWithGoogle } from "./auth/actions";
 import { createClient } from "@/utils/supabase/server";
 
@@ -9,6 +8,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
+  const userId = claims?.sub;
   const email = typeof claims?.email === "string" ? claims.email : null;
   const metadata = claims?.user_metadata;
   const name =
@@ -26,10 +26,61 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const query = await searchParams;
   const authError = query.authError === "google";
 
-  if (email) {
+  if (email && userId) {
+    const [{ data: preferences }, { data: workspaceData, error: workspaceError }] =
+      await Promise.all([
+        supabase
+          .from("user_preferences")
+          .select("language")
+          .eq("user_id", userId)
+          .maybeSingle(),
+        supabase
+          .from("workspaces")
+          .select("id, name")
+          .eq("owner_user_id", userId)
+          .order("created_at", { ascending: true }),
+      ]);
+
+    if (workspaceError) throw new Error("Không thể tải danh sách workspace.");
+
+    let workspaces = (workspaceData ?? []) as Workspace[];
+    if (workspaces.length === 0) {
+      const firstName = (name ?? email).trim().split(/\s+/)[0] || "My";
+      const defaultName = `${firstName} Space`.slice(0, 48);
+      const { data: created, error: createError } = await supabase
+        .from("workspaces")
+        .insert({ owner_user_id: userId, name: defaultName })
+        .select("id, name")
+        .single();
+
+      if (createError?.code === "23505") {
+        const { data: existing, error: existingError } = await supabase
+          .from("workspaces")
+          .select("id, name")
+          .eq("owner_user_id", userId)
+          .order("created_at", { ascending: true });
+        if (existingError || !existing?.length) {
+          throw new Error("Không thể khởi tạo workspace.");
+        }
+        workspaces = existing as Workspace[];
+      } else if (createError || !created) {
+        throw new Error("Không thể khởi tạo workspace.");
+      } else {
+        workspaces = [created as Workspace];
+      }
+    }
+
+    const requestedWorkspaceId = Number(query.workspace);
+    const initialWorkspace = workspaces.find(
+      ({ id }) => id === requestedWorkspaceId,
+    ) ?? workspaces[0];
+
     return (
       <WorkspaceShell
-        profile={<ProfileMenu email={email} name={name ?? email} avatarUrl={avatarUrl} />}
+        workspaces={workspaces}
+        initialWorkspaceId={initialWorkspace.id}
+        initialLanguage={preferences?.language === "en" ? "en" : "vi"}
+        account={{ email, name: name ?? email, avatarUrl }}
       >
         {query.welcome === "1" && (
           <div className="login-curtain fixed inset-0 z-30 flex items-center justify-center bg-[var(--page-background)] px-6 py-12 text-center">

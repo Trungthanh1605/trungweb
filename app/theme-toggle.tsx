@@ -12,7 +12,13 @@ const currentTheme = (): Theme =>
 const idleMarker = (theme: Theme) =>
   theme === "dark" ? "Night Idle" : "Day Idle";
 
-export default function ThemeToggle({ compact = false }: { compact?: boolean }) {
+export default function ThemeToggle({
+  compact = false,
+  language = "vi",
+}: {
+  compact?: boolean;
+  language?: "vi" | "en";
+}) {
   const button = useRef<HTMLButtonElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const animation = useRef<DotLottie>(null);
@@ -96,7 +102,11 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
         animation.current?.setMarker(idleMarker(previous));
         animation.current?.setLoop(true);
         animation.current?.play();
-        setError("Không thể lưu giao diện. Vui lòng thử lại.");
+        setError(
+          language === "en"
+            ? "Could not save the appearance. Please try again."
+            : "Không thể lưu giao diện. Vui lòng thử lại.",
+        );
       }
     });
   };
@@ -106,10 +116,10 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
       <button
         ref={button}
         type="button"
-        aria-label="Chế độ tối"
+        aria-label={language === "en" ? "Dark mode" : "Chế độ tối"}
         aria-pressed="false"
         aria-describedby={error ? "theme-error" : undefined}
-        title="Chuyển chế độ sáng/tối"
+        title={language === "en" ? "Toggle light/dark mode" : "Chuyển chế độ sáng/tối"}
         onClick={toggleTheme}
         disabled={pending}
         className={`${compact ? "relative h-11 w-[4.25rem] p-1" : "fixed right-4 top-4 z-10 h-12 w-[5.5rem] sm:right-6 sm:top-6"} flex touch-manipulation items-center justify-center overflow-hidden rounded-full transition-transform active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60`}

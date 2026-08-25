@@ -4,7 +4,7 @@ import { DotLottie } from "@lottiefiles/dotlottie-web";
 import { useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 
-export default function LogoutButton() {
+export default function LogoutButton({ label = "Đăng xuất" }: { label?: string }) {
   const { pending } = useFormStatus();
   const canvas = useRef<HTMLCanvasElement>(null);
   const animation = useRef<DotLottie>(null);
@@ -42,15 +42,15 @@ export default function LogoutButton() {
   return (
     <button
       type="submit"
-      aria-label="Đăng xuất"
-      title="Đăng xuất"
+      aria-label={label}
+      title={label}
       disabled={pending}
       onClick={play}
       onMouseEnter={play}
       onFocus={play}
       className="flex h-11 w-full cursor-pointer items-center justify-between overflow-hidden rounded-2xl bg-black/[0.04] pl-3 text-left transition-opacity hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60 dark:bg-white/[0.06]"
     >
-      <span className="text-sm font-medium">Đăng xuất</span>
+      <span className="text-sm font-medium">{label}</span>
       <span className="profile-action-visual mr-1" aria-hidden="true">
         <canvas
           ref={canvas}

@@ -5,10 +5,12 @@ import { useEffect, useRef } from "react";
 
 export default function HoldToDeleteButton({
   label,
+  actionLabel = "Giữ để xóa",
   disabled,
   onDelete,
 }: {
   label: string;
+  actionLabel?: string;
   disabled: boolean;
   onDelete: () => Promise<boolean>;
 }) {
@@ -74,8 +76,8 @@ export default function HoldToDeleteButton({
   return (
     <button
       type="button"
-      aria-label={`Giữ để xóa ${label}`}
-      title={`Giữ để xóa ${label}`}
+      aria-label={`${actionLabel} ${label}`}
+      title={`${actionLabel} ${label}`}
       disabled={disabled}
       onPointerDown={() => setHold("hold")}
       onPointerUp={() => setHold("release")}

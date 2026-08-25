@@ -24,19 +24,21 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const { data: authData } = await supabase.auth.getClaims();
   const userId = authData?.claims?.sub;
   let theme: "light" | "dark" | undefined;
+  let language: "vi" | "en" = "vi";
 
   if (userId) {
     const { data } = await supabase
       .from("user_preferences")
-      .select("theme")
+      .select("theme, language")
       .eq("user_id", userId)
       .maybeSingle();
     theme = data?.theme === "dark" ? "dark" : "light";
+    language = data?.language === "en" ? "en" : "vi";
   }
 
   return (
     <html
-      lang="vi"
+      lang={language}
       data-theme={theme}
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
