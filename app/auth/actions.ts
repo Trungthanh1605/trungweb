@@ -84,3 +84,54 @@ export async function createWorkspace(name: string) {
 
   return { id: data.id as number, name: data.name as string };
 }
+
+export async function updateWorkspace(id: number, name: string) {
+  const normalizedName = name.trim();
+  if (!Number.isSafeInteger(id) || id < 1) {
+    throw new Error("Workspace không hợp lệ.");
+  }
+  if (normalizedName.length < 1 || normalizedName.length > 48) {
+    throw new Error("Tên workspace phải có từ 1 đến 48 ký tự.");
+  }
+
+  const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  const userId = authData?.claims?.sub;
+
+  if (authError || !userId) throw new Error("Bạn cần đăng nhập để sửa workspace.");
+
+  const { data, error } = await supabase
+    .from("workspaces")
+    .update({ name: normalizedName })
+    .eq("id", id)
+    .eq("owner_user_id", userId)
+    .select("id, name")
+    .single();
+
+  if (error?.code === "23505") throw new Error("Bạn đã có workspace với tên này.");
+  if (error || !data) throw new Error("Không thể sửa workspace.");
+
+  return { id: data.id as number, name: data.name as string };
+}
+
+export async function deleteWorkspace(id: number) {
+  if (!Number.isSafeInteger(id) || id < 1) {
+    throw new Error("Workspace không hợp lệ.");
+  }
+
+  const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.getClaims();
+  const userId = authData?.claims?.sub;
+
+  if (authError || !userId) throw new Error("Bạn cần đăng nhập để xóa workspace.");
+
+  const { data, error } = await supabase
+    .from("workspaces")
+    .delete()
+    .eq("id", id)
+    .eq("owner_user_id", userId)
+    .select("id")
+    .single();
+
+  if (error || !data) throw new Error("Không thể xóa workspace.");
+}

@@ -1,7 +1,13 @@
 "use client";
 
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
-import { createWorkspace, saveLanguage } from "./auth/actions";
+import {
+  createWorkspace,
+  deleteWorkspace,
+  saveLanguage,
+  updateWorkspace,
+} from "./auth/actions";
+import HoldToDeleteButton from "./hold-to-delete-button";
 import ProfileSettings from "./profile-settings";
 
 export type Workspace = {
@@ -49,6 +55,12 @@ const copy = {
     creating: "Đang tạo…",
     workspaceNameError: "Nhập tên workspace từ 1 đến 48 ký tự.",
     workspaceCreateError: "Không thể tạo workspace. Vui lòng thử lại.",
+    workspaceUpdateError: "Không thể sửa workspace. Vui lòng thử lại.",
+    workspaceDeleteError: "Không thể xóa workspace. Vui lòng thử lại.",
+    editWorkspace: "Sửa workspace",
+    saveWorkspace: "Lưu tên workspace",
+    cancelWorkspaceEdit: "Hủy sửa workspace",
+    holdToDelete: "Giữ để xóa",
     search: "Tìm kiếm",
     searchPlaceholder: "Tìm kiếm...",
     overview: "Tổng quan",
@@ -86,6 +98,12 @@ const copy = {
     creating: "Creating…",
     workspaceNameError: "Enter a workspace name between 1 and 48 characters.",
     workspaceCreateError: "Could not create the workspace. Please try again.",
+    workspaceUpdateError: "Could not update the workspace. Please try again.",
+    workspaceDeleteError: "Could not delete the workspace. Please try again.",
+    editWorkspace: "Edit workspace",
+    saveWorkspace: "Save workspace name",
+    cancelWorkspaceEdit: "Cancel workspace editing",
+    holdToDelete: "Hold to delete",
     search: "Search",
     searchPlaceholder: "Search...",
     overview: "Overview",
@@ -140,6 +158,9 @@ export default function WorkspaceShell({
   const [workspaceId, setWorkspaceId] = useState(initialWorkspaceId);
   const [workspaceName, setWorkspaceName] = useState("");
   const [workspaceError, setWorkspaceError] = useState<string>();
+  const [editingWorkspaceId, setEditingWorkspaceId] = useState<number>();
+  const [workspaceDraft, setWorkspaceDraft] = useState("");
+  const [deletingWorkspaceId, setDeletingWorkspaceId] = useState<number>();
   const [language, setLanguage] = useState<Language>(initialLanguage);
   const [languageError, setLanguageError] = useState<string>();
   const [workspacePending, startWorkspaceTransition] = useTransition();
@@ -198,6 +219,68 @@ export default function WorkspaceShell({
     });
   }
 
+  function beginWorkspaceEdit(workspace: Workspace) {
+    setWorkspaceError(undefined);
+    setEditingWorkspaceId(workspace.id);
+    setWorkspaceDraft(workspace.name);
+  }
+
+  function cancelWorkspaceEdit() {
+    setEditingWorkspaceId(undefined);
+    setWorkspaceDraft("");
+  }
+
+  function handleUpdateWorkspace(
+    event: React.FormEvent<HTMLFormElement>,
+    id: number,
+  ) {
+    event.preventDefault();
+    const normalizedName = workspaceDraft.trim();
+    setWorkspaceError(undefined);
+
+    if (normalizedName.length < 1 || normalizedName.length > 48) {
+      setWorkspaceError(text.workspaceNameError);
+      return;
+    }
+
+    startWorkspaceTransition(async () => {
+      try {
+        const updated = await updateWorkspace(id, normalizedName);
+        setWorkspaces((current) =>
+          current.map((workspace) => workspace.id === id ? updated : workspace),
+        );
+        cancelWorkspaceEdit();
+      } catch {
+        setWorkspaceError(text.workspaceUpdateError);
+      }
+    });
+  }
+
+  async function handleDeleteWorkspace(workspace: Workspace) {
+    setWorkspaceError(undefined);
+    setDeletingWorkspaceId(workspace.id);
+
+    try {
+      await deleteWorkspace(workspace.id);
+      const remaining = workspaces.filter(({ id }) => id !== workspace.id);
+
+      if (editingWorkspaceId === workspace.id) cancelWorkspaceEdit();
+      if (remaining.length === 0) {
+        window.location.replace("/");
+        return true;
+      }
+
+      setWorkspaces(remaining);
+      setDeletingWorkspaceId(undefined);
+      if (workspaceId === workspace.id) selectWorkspace(remaining[0].id);
+      return true;
+    } catch {
+      setDeletingWorkspaceId(undefined);
+      setWorkspaceError(text.workspaceDeleteError);
+      return false;
+    }
+  }
+
   function handleLanguageChange(nextLanguage: Language) {
     const previousLanguage = language;
     setLanguage(nextLanguage);
@@ -252,21 +335,82 @@ export default function WorkspaceShell({
                 </span>
               </summary>
 
-              <div className="absolute left-0 top-14 z-20 w-60 rounded-2xl border border-[var(--ui-border)] bg-[var(--page-background)] p-2 shadow-xl">
+              <div className="absolute left-0 top-14 z-20 w-[min(22rem,calc(100vw-1rem))] rounded-2xl border border-[var(--ui-border)] bg-[var(--page-background)] p-2 shadow-xl">
                 <p className="px-2 pb-2 pt-1 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--page-muted)]">{text.workspaces}</p>
-                <div className="max-h-44 space-y-1 overflow-y-auto">
-                  {workspaces.map((workspace) => (
-                    <button
-                      key={workspace.id}
-                      type="button"
-                      aria-pressed={workspace.id === workspaceId}
-                      onClick={() => selectWorkspace(workspace.id)}
-                      className={`flex h-11 w-full cursor-pointer items-center gap-2 rounded-xl px-2 text-left text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus-color)] ${workspace.id === workspaceId ? "bg-[var(--ui-active)] font-semibold" : "hover:bg-[var(--ui-hover)]"}`}
-                    >
-                      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[var(--ui-fill)] font-semibold uppercase">{workspace.name.charAt(0)}</span>
-                      <span className="truncate">{workspace.name}</span>
-                    </button>
-                  ))}
+                <div className="max-h-56 space-y-1 overflow-y-auto">
+                  {workspaces.map((workspace) => {
+                    const editing = editingWorkspaceId === workspace.id;
+                    return (
+                      <div
+                        key={workspace.id}
+                        className={`flex h-11 min-w-0 items-center rounded-xl transition-colors ${workspace.id === workspaceId ? "bg-[var(--ui-active)] font-semibold" : "hover:bg-[var(--ui-hover)]"}`}
+                      >
+                        {editing ? (
+                          <form
+                            onSubmit={(event) => handleUpdateWorkspace(event, workspace.id)}
+                            className="grid h-11 min-w-0 flex-1 grid-cols-[minmax(0,1fr)_2.75rem_2.75rem] items-center"
+                          >
+                            <input
+                              autoFocus
+                              aria-label={text.editWorkspace}
+                              value={workspaceDraft}
+                              maxLength={48}
+                              disabled={workspacePending}
+                              onChange={(event) => setWorkspaceDraft(event.target.value)}
+                              className="h-9 min-w-0 rounded-lg border border-[var(--ui-border)] bg-[var(--page-background)] px-2 text-sm font-normal outline-none focus-visible:border-[var(--focus-color)] disabled:cursor-wait disabled:opacity-60"
+                            />
+                            <button
+                              type="submit"
+                              aria-label={text.saveWorkspace}
+                              title={text.saveWorkspace}
+                              disabled={workspacePending}
+                              className="grid size-11 cursor-pointer place-items-center rounded-xl hover:bg-[var(--ui-hover)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50"
+                            >
+                              <SidebarIcon><path strokeLinecap="round" strokeLinejoin="round" d="m5 12 4 4L19 6" /></SidebarIcon>
+                            </button>
+                            <button
+                              type="button"
+                              aria-label={text.cancelWorkspaceEdit}
+                              title={text.cancelWorkspaceEdit}
+                              disabled={workspacePending}
+                              onClick={cancelWorkspaceEdit}
+                              className="grid size-11 cursor-pointer place-items-center rounded-xl hover:bg-[var(--ui-hover)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50"
+                            >
+                              <SidebarIcon><path strokeLinecap="round" d="m7 7 10 10M17 7 7 17" /></SidebarIcon>
+                            </button>
+                          </form>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              aria-pressed={workspace.id === workspaceId}
+                              onClick={() => selectWorkspace(workspace.id)}
+                              className="flex h-11 min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-xl px-2 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus-color)]"
+                            >
+                              <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-[var(--ui-fill)] font-semibold uppercase">{workspace.name.charAt(0)}</span>
+                              <span className="truncate">{workspace.name}</span>
+                            </button>
+                            <button
+                              type="button"
+                              aria-label={`${text.editWorkspace} ${workspace.name}`}
+                              title={text.editWorkspace}
+                              disabled={workspacePending || deletingWorkspaceId !== undefined}
+                              onClick={() => beginWorkspaceEdit(workspace)}
+                              className="grid size-11 shrink-0 cursor-pointer place-items-center rounded-xl hover:bg-[var(--ui-hover)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus-color)] disabled:cursor-wait disabled:opacity-50"
+                            >
+                              <SidebarIcon><path strokeLinecap="round" strokeLinejoin="round" d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Zm10-12 3 3" /></SidebarIcon>
+                            </button>
+                            <HoldToDeleteButton
+                              label={workspace.name}
+                              actionLabel={text.holdToDelete}
+                              disabled={workspacePending || deletingWorkspaceId !== undefined}
+                              onDelete={() => handleDeleteWorkspace(workspace)}
+                            />
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <form onSubmit={handleCreateWorkspace} className="mt-2 border-t border-[var(--ui-border)] pt-2">
