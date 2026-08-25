@@ -121,13 +121,6 @@ body {
   animation-delay: 360ms;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .login-gradient-text {
-    animation: none;
-    mask-image: none;
-  }
-}
-
 @keyframes overflow-marquee {
   to {
     transform: translateX(min(0px, calc(100cqw - 100%)));
