@@ -70,7 +70,12 @@ export default function SettingsIcon({ selected }: { selected: boolean }) {
         }
       }}
     >
-      <canvas ref={canvas} width={40} height={40} className="size-5" />
+      <canvas
+        ref={canvas}
+        width={40}
+        height={40}
+        className="size-5 scale-x-[3.6] scale-y-[3.6]"
+      />
     </span>
   );
 }
