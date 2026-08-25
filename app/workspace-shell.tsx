@@ -303,7 +303,7 @@ export default function WorkspaceShell({
       <aside
         aria-label={text.sidebar}
         data-expanded={expanded}
-        className={`${expanded ? "w-64" : "w-14"} fixed inset-y-0 left-0 z-10 flex overflow-hidden border-r border-[var(--ui-border)] bg-[var(--page-background)] transition-[width] duration-300 ease-out`}
+        className={`${expanded ? "w-64 overflow-visible" : "w-14 overflow-hidden"} fixed inset-y-0 left-0 z-10 flex border-r border-[var(--ui-border)] bg-[var(--page-background)] transition-[width] duration-300 ease-out`}
       >
         <div className={`${expanded ? "w-64" : "w-14"} flex h-full shrink-0 flex-col p-2`}>
           <div className="flex items-center gap-1">
