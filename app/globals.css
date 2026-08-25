@@ -34,6 +34,12 @@
 
 html {
   background: var(--page-background);
+  --ui-border: color-mix(in srgb, var(--page-foreground) 10%, transparent);
+  --ui-border-strong: color-mix(in srgb, var(--page-foreground) 16%, transparent);
+  --ui-hover: color-mix(in srgb, var(--page-foreground) 5%, transparent);
+  --ui-active: color-mix(in srgb, var(--page-foreground) 9%, transparent);
+  --ui-subtle: color-mix(in srgb, var(--page-foreground) 3%, transparent);
+  --ui-fill: color-mix(in srgb, var(--page-foreground) 6%, transparent);
 }
 
 body {
@@ -107,6 +113,7 @@ body {
   width: 100%;
 }
 
+.app-icon,
 .profile-action-icon {
   width: 1.25rem;
   height: 1.25rem;

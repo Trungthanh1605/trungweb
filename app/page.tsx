@@ -1,6 +1,7 @@
 import ConstructionAnimation from "./construction-animation";
 import ProfileMenu from "./profile-menu";
 import PasskeyButton from "./passkey-button";
+import WorkspaceShell from "./workspace-shell";
 import { signInWithGoogle } from "./auth/actions";
 import { createClient } from "@/utils/supabase/server";
 
@@ -27,10 +28,9 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   if (email) {
     return (
-      <main className="relative min-h-dvh overflow-hidden bg-[var(--page-background)] text-[var(--page-foreground)] transition-colors duration-300">
-        <ProfileMenu email={email} name={name ?? email} avatarUrl={avatarUrl} />
-        <section aria-label="Nội dung chính" className="min-h-dvh" />
-
+      <WorkspaceShell
+        profile={<ProfileMenu email={email} name={name ?? email} avatarUrl={avatarUrl} />}
+      >
         {query.welcome === "1" && (
           <div className="login-curtain fixed inset-0 z-30 flex items-center justify-center bg-[var(--page-background)] px-6 py-12 text-center">
             <div className="flex w-full max-w-3xl flex-col items-center">
@@ -47,7 +47,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             </div>
           </div>
         )}
-      </main>
+      </WorkspaceShell>
     );
   }
 
