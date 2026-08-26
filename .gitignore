@@ -47,3 +47,6 @@ cloudflare-env.d.ts
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
