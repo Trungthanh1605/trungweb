@@ -59,66 +59,26 @@ body {
 }
 
 @keyframes login-gradient-text {
-  0%,
-  8% {
-    mask-image: linear-gradient(
-      90deg,
-      #000 0,
-      #000 calc(100% - 1.5rem),
-      transparent 100%
-    );
-    mask-position: left;
-    mask-size: 0% 100%;
+  from {
+    mask-position: 100% 100%;
   }
 
-  25%,
-  72% {
-    mask-image: linear-gradient(
-      90deg,
-      #000 0,
-      #000 calc(100% - 1.5rem),
-      transparent 100%
-    );
-    mask-position: left;
-    mask-size: calc(100% + 1.5rem) 100%;
-  }
-
-  72.01% {
-    mask-image: linear-gradient(
-      270deg,
-      #000 0,
-      #000 calc(100% - 1.5rem),
-      transparent 100%
-    );
-    mask-position: right;
-    mask-size: calc(100% + 1.5rem) 100%;
-  }
-
-  90%,
-  100% {
-    mask-image: linear-gradient(
-      270deg,
-      #000 0,
-      #000 calc(100% - 1.5rem),
-      transparent 100%
-    );
-    mask-position: right;
-    mask-size: 0% 100%;
+  to {
+    mask-position: 0 0;
   }
 }
 
 .login-gradient-text {
-  animation: login-gradient-text 7s ease-in-out infinite both;
+  mask-image: linear-gradient(
+    135deg,
+    rgb(0 0 0 / 35%) 42%,
+    #000 50%,
+    rgb(0 0 0 / 35%) 58%
+  );
   mask-repeat: no-repeat;
-  will-change: mask-size;
-}
-
-.login-gradient-text-delay-1 {
-  animation-delay: 180ms;
-}
-
-.login-gradient-text-delay-2 {
-  animation-delay: 360ms;
+  mask-size: 200% 200%;
+  animation: login-gradient-text 2.4s linear infinite;
+  will-change: mask-position;
 }
 
 @keyframes overflow-marquee {

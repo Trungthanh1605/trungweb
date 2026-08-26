@@ -107,15 +107,17 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       <section className="flex w-full max-w-3xl flex-col items-center text-center">
         <ConstructionAnimation />
 
-        <p className="login-gradient-text mt-2 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--page-muted)] transition-colors duration-300 [@media(max-height:600px)]:mt-0">
-          Website đang được xây dựng
-        </p>
-        <h1 className="login-gradient-text login-gradient-text-delay-1 mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl [@media(max-height:600px)]:mt-2 [@media(max-height:600px)]:text-3xl">
-          WELCOME
-        </h1>
-        <p className="login-gradient-text login-gradient-text-delay-2 mt-5 max-w-md text-base leading-7 text-[var(--page-muted)] transition-colors duration-300 sm:text-lg [@media(max-height:600px)]:mt-2 [@media(max-height:600px)]:text-sm [@media(max-height:600px)]:leading-5">
-          PERSONAL WEBSITE.
-        </p>
+        <div className="login-gradient-text flex flex-col items-center">
+          <p className="mt-2 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--page-muted)] transition-colors duration-300 [@media(max-height:600px)]:mt-0">
+            Website đang được xây dựng
+          </p>
+          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl [@media(max-height:600px)]:mt-2 [@media(max-height:600px)]:text-3xl">
+            WELCOME
+          </h1>
+          <p className="mt-5 max-w-md text-base leading-7 text-[var(--page-muted)] transition-colors duration-300 sm:text-lg [@media(max-height:600px)]:mt-2 [@media(max-height:600px)]:text-sm [@media(max-height:600px)]:leading-5">
+            PERSONAL WEBSITE.
+          </p>
+        </div>
 
         <div className="mt-8 flex flex-col items-center gap-3 [@media(max-height:600px)]:mt-4">
           <form action={signInWithGoogle}>
